@@ -4,7 +4,7 @@ a lib to set/get array value with dot notation
 # Usage
 get value
 
-````
+```php
 use Accessor\SimpleArrayAccessor;
 
 $accessor = new SimpleArrayAccessor(array(
@@ -51,10 +51,10 @@ var_dump($accessor->get('foo.phar[].a'));
 
 var_dump($accessor->get('foo.phar[].a', 'not found'));
 // output: array("b", "c", 'not found')
-````
+```
 set value
 
-````
+```php
 use Accessor\SimpleArrayAccessor;
 
 // with no given array
@@ -176,4 +176,21 @@ var_dump($accessor->set("a.b.c", "updated")->getArray());
 //            ),
 //       "a.b.c" => "updated"
 // )
-````
+```
+
+Note: the key of element in array is better not to contain "." to avoid ambiguous meaning. However if "."
+is a compulsory character, please use it in root level but not child level, as below:
+
+```php
+$arrayWithRegconisableKeys = array(
+    "foo" => "bar",
+    "buzz" => array(1, 2, 3)
+    "a.b.c" => "d"
+);
+
+$arrayWithUnregconisableKeys = array(
+    "foo" => array(
+        "a.b.c" => "d"
+    )
+);
+```
