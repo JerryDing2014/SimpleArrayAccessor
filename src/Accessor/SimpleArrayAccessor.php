@@ -1,7 +1,7 @@
 <?php
-namespace ArrayAccessor;
+namespace Accessor;
 
-class DotNotationAccessor
+class SimpleArrayAccessor
 {
     // the max depth level on recursive call
     const DEFAULT_MAX_DEPTH = 100;
@@ -30,6 +30,14 @@ class DotNotationAccessor
     }
 
     /**
+     * @return array
+     */
+    public function getArray()
+    {
+        return $this->array;
+    }
+
+    /**
      * @param $key
      *
      * @return bool
@@ -39,7 +47,13 @@ class DotNotationAccessor
         if ($this->isKeyChain($key)) {
             $notFound = 'not found';
             $value = $this->getValueByPath($key, $this->getArray(), $notFound);
-            return $value !== $notFound;
+
+            if (is_array($value)) {
+                $result = array_filter($value, function ($v) {return $v !== 'not found';});
+                return !empty($result);
+            } else {
+                return $value !== $notFound;
+            }
         } else {
             return array_key_exists($key, $this->array);
         }
@@ -97,14 +111,6 @@ class DotNotationAccessor
     private function getArrayValueByKey($key, array $array, $defaultValue = null)
     {
         return array_key_exists($key, $array) ? $array[$key] : $defaultValue;
-    }
-
-    /**
-     * @return array
-     */
-    private function getArray()
-    {
-        return $this->array;
     }
 
     /**
@@ -246,11 +252,11 @@ class DotNotationAccessor
     private function setValueByPath($key, $value, array &$array = null, $depth = null, $maxDepth = null)
     {
         if (empty($key)) {
-            $array = $value;
-            return;
+            throw new \InvalidArgumentException("key is required");
         }
 
         if (empty($array)) {
+            $array = array($key => $value);
             return;
         }
 
