@@ -14,7 +14,7 @@
         }
     },
     "require-dev": {
-        "php": ">=5.3",
+        "php": "^5.3",
         "phpunit/phpunit": "^5"
     },
     "license": "Apache License 2.0",
