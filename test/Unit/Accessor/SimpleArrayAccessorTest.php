@@ -17,7 +17,13 @@ class SimpleArrayAccessorTest extends \PHPUnit_Framework_TestCase
                 "phar" => array(
                     array("a" => "b"),
                     array("a" => "c"),
-                    array("d" => "e")
+                    array("d" => "e"),
+                    array("f" => array(
+                        array("aa" => 1),
+                        array("bb" => 2),
+                        3,
+                        array("bb" => 4)
+                    )),
                 )
             ),
             "a.b.c" => "d"
@@ -36,10 +42,13 @@ class SimpleArrayAccessorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->array["foo"]["bar"][1], $accessor->get("foo.bar[1]"));
         $this->assertEquals($this->array["a.b.c"], $accessor->get("a.b.c"));
 
-        $this->assertEquals(array("b", "c", null), $accessor->get("foo.phar[].a"));
-        $this->assertEquals(array("b", "c", 'not found'), $accessor->get("foo.phar[].a", "not found"));
-        $this->assertEquals(array(null, null, "e"), $accessor->get("foo.phar[].d"));
-        $this->assertEquals(array("not found", "not found", "e"), $accessor->get("foo.phar[].d", "not found"));
+        $this->assertEquals(array("b", "c", null, null), $accessor->get("foo.phar[].a"));
+        $this->assertEquals(array("b", "c", 'not found', 'not found'), $accessor->get("foo.phar[].a", "not found"));
+        $this->assertEquals(array(null, null, "e", null), $accessor->get("foo.phar[].d"));
+        $this->assertEquals(array("not found", "not found", "e", 'not found'), $accessor->get("foo.phar[].d", "not found"));
+
+        $this->assertEquals(1, $accessor->get("foo.phar[3].f[0].aa"));
+        $this->assertEquals(array(null, null, null, array(1, null, null, null)), $accessor->get("foo.phar[].f[].aa"));
     }
 
     public function testHas()
@@ -117,5 +126,26 @@ class SimpleArrayAccessorTest extends \PHPUnit_Framework_TestCase
         $expected = $accessor->getArray();
         $expected["a.b.c"] = "updated";
         $this->assertEquals($expected, $accessor->set("a.b.c", "updated")->getArray());
+    }
+
+    public function testSetWithDeepArray()
+    {
+        $accessor = new SimpleArrayAccessor($this->array);
+        $expected = $accessor->getArray();
+        $expected["foo"]["phar"][3]["f"][0]["aa"] = "updated";
+        $this->assertEquals($expected, $accessor->set("foo.phar[3].f[0].aa", "updated")->getArray());
+
+        $expected = $accessor->getArray();
+        $expected["foo"]["phar"][3]["f"][0]["aa"] = "updated-updated";
+        $this->assertEquals($expected, $accessor->set("foo.phar[3].f[].aa", "updated-updated")->getArray());
+
+        $expected = $accessor->getArray();
+        $expected["foo"]["phar"][3]["f"][1]["bb"] = "updated";
+        $expected["foo"]["phar"][3]["f"][3]["bb"] = "updated";
+        $this->assertEquals($expected, $accessor->set("foo.phar[3].f[].bb", "updated")->getArray());
+
+        $expected = $accessor->getArray();
+        $expected["foo"]["phar"][3]["f"][2]=array("updated");
+        $this->assertEquals($expected, $accessor->set("foo.phar[3].f[2]", array("updated"))->getArray());
     }
 }
