@@ -164,7 +164,6 @@ $array = array(
 $accessor = new SimpleArrayAccessor($array)
 
 var_dump($accessor->set("a.b.c", "updated")->getArray());
-// equivelant to $accessor->set("foo.phar[]", "updated-updated-updated")
 // output:
 // array(
 //      "foo" => array(
