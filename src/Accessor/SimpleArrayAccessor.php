@@ -128,7 +128,7 @@ class SimpleArrayAccessor
      *                    "a.b[0].c",
      *                    "a.b[].c.d.e[].f.g"
      *                    "a.b[0].c.d.e[1].f.g"
-     * @param array $array
+     * @param mixed $haystack
      * @param null $defaultValue
      *
      * @param null $depth
@@ -137,13 +137,13 @@ class SimpleArrayAccessor
      * @return mixed|null
      * @throws \InvalidArgumentException only when the max recursive depth level has been exceeded
      */
-    private function getValueByPath($key, array $array = null, $defaultValue = null, $depth = null, $maxDepth = null)
+    private function getValueByPath($key, $haystack = null, $defaultValue = null, $depth = null, $maxDepth = null)
     {
         if (empty($key)) {
-            return $array;
+            return $haystack;
         }
 
-        if (empty($array)) {
+        if (empty($haystack)) {
             return $defaultValue;
         }
 
@@ -151,13 +151,17 @@ class SimpleArrayAccessor
             return $defaultValue;
         }
 
-        if (array_key_exists($key, $array)) {
-            return $array[$key];
+        if (!is_array($haystack)) {
+            return $defaultValue;
+        }
+
+        if (array_key_exists($key, $haystack)) {
+            return $haystack[$key];
         }
 
         // determine if the given key is a key chain concatenated with '.', e.g. 'a.b.c'
         if (!$this->isKeyChain($key)) {
-            return $this->getArrayValueByKey($key, $array, $defaultValue);
+            return $this->getArrayValueByKey($key, $haystack, $defaultValue);
         }
 
         // take a control on how depth this recursive process can go, if it goes beyond the allowed level
@@ -167,7 +171,7 @@ class SimpleArrayAccessor
         $depth = is_numeric($depth) ? ($depth + 1) : 1 ;
 
         $keys = explode(".", $key);
-        $temp = $array;
+        $temp = $haystack;
         foreach ($keys as $index => $innerKey) {
             // is there any array associated in the key chain?
             $pos = strpos($innerKey, '[');
@@ -242,21 +246,21 @@ class SimpleArrayAccessor
      *                    "a.b[].c.d.e[].f.g"
      *                    "a.b[0].c.d.e[1].f.g"
      * @param mixed $value
-     * @param array $array
+     * @param mixed $haystack
      * @param integer|null $depth
      * @param int $maxDepth
      *
      * @return void
      * @throws \InvalidArgumentException only when the max recursive depth level has been exceeded
      */
-    private function setValueByPath($key, $value, array &$array = null, $depth = null, $maxDepth = null)
+    private function setValueByPath($key, $value, &$haystack = null, $depth = null, $maxDepth = null)
     {
         if (empty($key)) {
             throw new \InvalidArgumentException("key is required");
         }
 
-        if (empty($array)) {
-            $array = array($key => $value);
+        if (is_null($haystack)) {
+            $haystack = array($key => $value);
             return;
         }
 
@@ -264,8 +268,8 @@ class SimpleArrayAccessor
             return;
         }
 
-        if (array_key_exists($key, $array)) {
-            $array[$key] = $value;
+        if (is_array($haystack) && array_key_exists($key, $haystack)) {
+            $haystack[$key] = $value;
             return;
         }
 
@@ -281,7 +285,7 @@ class SimpleArrayAccessor
         $depth = is_numeric($depth) ? ($depth + 1) : 1 ;
 
         // always use a reference for assigning value
-        $temp =& $array;
+        $temp =& $haystack;
 
         $keys = explode(".", $key);
         foreach ($keys as $index => $innerKey) {
@@ -298,6 +302,7 @@ class SimpleArrayAccessor
 
             // get the reference of value the key refers to
             $temp =& $temp[$actualKey];
+
 
             // if there is no array associated like 'a.b.c', then continue
             if ($pos === false) {
