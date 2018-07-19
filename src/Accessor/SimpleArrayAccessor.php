@@ -345,7 +345,8 @@ class SimpleArrayAccessor
                     return;
                 }
 
-                $this->setValueByPath($keyPath, $value, $temp[$innerIndex], $depth, $maxDepth);
+                $temp =& $temp[$innerIndex];
+                $this->setValueByPath($keyPath, $value, $temp, $depth, $maxDepth);
             }
         }
 
