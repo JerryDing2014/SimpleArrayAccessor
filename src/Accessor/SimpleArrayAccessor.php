@@ -259,7 +259,7 @@ class SimpleArrayAccessor
             throw new \InvalidArgumentException("key is required");
         }
 
-        if (is_null($haystack)) {
+        if (is_null($haystack) || (is_array($haystack) && empty($haystack))) {
             $haystack = array($key => $value);
             return;
         }
