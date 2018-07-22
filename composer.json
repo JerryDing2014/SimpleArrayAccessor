@@ -1,11 +1,10 @@
 {
     "name": "dingtao/simple-array-accessor",
     "description": "a simple lib to get/set array value with dot notation",
-    "version": "0.1",
     "type": "library",
     "autoload": {
         "psr-4": {
-            "": "src/"
+            "Accessor\\": "src/Accessor/"
         }
     },
     "autoload-dev": {
@@ -16,7 +15,7 @@
     "require-dev": {
         "phpunit/phpunit": "^5"
     },
-    "license": "Apache License 2.0",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "dingtao",
@@ -24,6 +23,6 @@
         }
     ],
     "require": {
-        "php": "^5.3"
+        "php": "^5.3 || ^7.0"
     }
 }
