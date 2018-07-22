@@ -1,6 +1,6 @@
 {
     "name": "dingtao/simple-array-accessor",
-    "description": "a lib to get/set array value with dot notation",
+    "description": "a simple lib to get/set array value with dot notation",
     "version": "0.1",
     "type": "library",
     "autoload": {
@@ -14,7 +14,6 @@
         }
     },
     "require-dev": {
-        "php": "^5.3",
         "phpunit/phpunit": "^5"
     },
     "license": "Apache License 2.0",
@@ -25,6 +24,6 @@
         }
     ],
     "require": {
-
+        "php": "^5.3"
     }
 }
