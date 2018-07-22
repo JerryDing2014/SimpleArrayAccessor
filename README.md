@@ -1,6 +1,9 @@
 # SimpleArrayAccessor
 a lib to set/get array value with dot notation
-
+# installation
+```
+composer require dingtao/simple-array-accessor
+```
 # Usage
 get value
 
