@@ -50,4 +50,10 @@ class ArrayAccessorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $accessor->get("foo.phar[3].f[0].aa"));
         $this->assertEquals(array(null, null, null, array(1, null, null, null)), $accessor->get("foo.phar[].f[].aa"));
     }
+
+    public function testCreate()
+    {
+        $accessor = ArrayAccessor::create($this->array);
+        $this->assertInstanceOf('Accessor\ArrayAccessor', $accessor);
+    }
 }
