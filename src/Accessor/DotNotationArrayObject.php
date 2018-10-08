@@ -8,6 +8,17 @@ class DotNotationArrayObject extends \ArrayObject
     const KEY_DELIMITER = ".";
 
     /**
+     * @param array $input
+     * @param int $flags
+     * @param string $iterator_class
+     * @return $this
+     */
+    public static function create($input = array(), $flags = 0, $iterator_class = "ArrayIterator")
+    {
+        return new static($input, $flags, $iterator_class);
+    }
+
+    /**
      * determine if the given key is a key chain by finding the '.' notation
      * @param string $key
      *

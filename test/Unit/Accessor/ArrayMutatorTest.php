@@ -127,4 +127,10 @@ class ArrayMutatorTest extends \PHPUnit_Framework_TestCase
         $expected["foo"]["phar"][3] = "updated";
         $this->assertEquals($expected, $mutator->set("foo.phar[]", "updated")->getArrayCopy());
     }
+
+    public function testCreate()
+    {
+        $mutator = ArrayMutator::create($this->array);
+        $this->assertInstanceOf('Accessor\ArrayMutator', $mutator);
+    }
 }
